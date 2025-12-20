@@ -1,6 +1,6 @@
 <p class="text-muted small">Pastikan akun kamu aman dengan menggunakan password yang panjang dan acak.</p>
 
-<form method="post" action="{{ route('profile.password.update') }}">
+<form method="post" action="#">
     @csrf
     @method('put')
 

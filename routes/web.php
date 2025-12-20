@@ -15,7 +15,11 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ProductController;
 use Illuminate\Support\Facades\Route;
+ 
 
 // ================================================
 // HALAMAN PUBLIK (Tanpa Login)
@@ -29,6 +33,26 @@ Route::get('/products', [CatalogController::class, 'index'])->name('catalog.inde
 Route::get('/products/{slug}', [CatalogController::class, 'show'])->name('catalog.show');
 
 
+Route::controller(GoogleController::class)->group(function () {
+    // ================================================
+    // ROUTE 1: REDIRECT KE GOOGLE
+    // ================================================
+    // URL: /auth/google
+    // Dipanggil saat user klik tombol "Login dengan Google"
+    // ================================================
+    Route::get('/auth/google', 'redirect')
+        ->name('auth.google');
+
+    // ================================================
+    // ROUTE 2: CALLBACK DARI GOOGLE
+    // ================================================
+    // URL: /auth/google/callback
+    // Dipanggil oleh Google setelah user klik "Allow"
+    // URL ini HARUS sama dengan yang didaftarkan di Google Console!
+    // ================================================
+    Route::get('/auth/google/callback', 'callback')
+        ->name('auth.google.callback');
+});
 // ================================================
 // HALAMAN YANG BUTUH LOGIN (Customer)
 // ================================================
@@ -77,7 +101,25 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
+
+   
+
+Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Kategori
+    Route::resource('categories', CategoryController::class)->except(['show']); // Kategori biasanya tidak butuh show detail page
+
+    // Produk
+    Route::resource('products', ProductController::class);
+
+    // Route tambahan untuk AJAX Image Handling (jika diperlukan)
+    // ...
 });
+
+});
+
 
 
 // ================================================

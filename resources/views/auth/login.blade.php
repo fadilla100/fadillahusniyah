@@ -1,10 +1,5 @@
-{{-- ======================================== FILE:
-resources/views/auth/login.blade.php FUNGSI: Halaman form login
-======================================== --}} @extends('layouts.app') {{-- ↑
-Menggunakan layout dari layouts/app.blade.php Halaman ini akan "masuk" ke bagian
-@yield('content') --}} @section('content') {{-- ↑ Mulai section yang akan
-ditampilkan di @yield('content') --}}
-
+@extends('layouts.app') 
+@section('content')
 <div class="container">
   <div class="row justify-content-center">
     {{-- ↑ justify-content-center = posisikan di tengah horizontal --}}

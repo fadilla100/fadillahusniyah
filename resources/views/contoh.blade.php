@@ -1,3 +1,7 @@
+{{-- ================================================
+     FILE: resources/views/contoh.blade.php
+     FUNGSI: Demonstrasi sintaks Blade
+     ================================================ --}}
 
 {{-- MENAMPILKAN DATA --}}
 {{-- {{ }} akan auto-escape untuk mencegah XSS --}}
