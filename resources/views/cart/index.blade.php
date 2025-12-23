@@ -1,3 +1,8 @@
+{{-- ================================================
+     FILE: resources/views/cart/index.blade.php
+     FUNGSI: Halaman keranjang belanja
+     ================================================ --}}
+
 @extends('layouts.app')
 
 @section('title', 'Keranjang Belanja')

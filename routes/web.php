@@ -102,6 +102,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
 
+    Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
+    Route::get('/product/{slug}', [CatalogController::class, 'show'])->name('catalog.show');
    
 
 Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('auth.google');
@@ -120,6 +122,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
 });
 
+Route::middleware('auth')->group(function() {
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('/wishlist/toggle/{product}', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+});
 
 
 // ================================================
