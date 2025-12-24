@@ -78,32 +78,18 @@
                                  alt="{{ auth()->user()->name }}">
                             <span class="d-none d-lg-inline">{{ auth()->user()->name }}</span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                    <i class="bi bi-person me-2"></i> Profil Saya
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('orders.index') }}">
-                                    <i class="bi bi-bag me-2"></i> Pesanan Saya
-                                </a>
-                            </li>
+                     <ul class="dropdown-menu dropdown-menu-end modern-dropdown-solid shadow-xl border-0 py-4 px-2" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item premium-item py-3 px-4 rounded" href="{{ route('profile.edit') }}"><i class="bi bi-person me-3"></i>Profil Saya</a></li>
+                            <li><a class="dropdown-item premium-item py-3 px-4 rounded" href="{{ route('orders.index') }}"><i class="bi bi-bag me-3"></i>Pesanan Saya</a></li>
                             @if(auth()->user()->isAdmin())
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item text-primary" href="{{ route('admin.dashboard') }}">
-                                        <i class="bi bi-speedometer2 me-2"></i> Admin Panel
-                                    </a>
-                                </li>
+                                <li><hr class="dropdown-divider my-3 mx-3 opacity-50"></li>
+                                <li><a class="dropdown-item premium-item py-3 px-4 rounded text-primary fw-bold" href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2 me-3"></i>Admin Panel</a></li>
                             @endif
-                            <li><hr class="dropdown-divider"></li>
+                            <li><hr class="dropdown-divider my-3 mx-3 opacity-50"></li>
                             <li>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button type="submit" class="dropdown-item text-danger">
-                                        <i class="bi bi-box-arrow-right me-2"></i> Logout
-                                    </button>
+                                    <button type="submit" class="dropdown-item premium-item py-3 px-4 rounded text-danger w-100 text-start"><i class="bi bi-box-arrow-right me-3"></i>Logout</button>
                                 </form>
                             </li>
                         </ul>

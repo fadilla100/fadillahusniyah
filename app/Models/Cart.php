@@ -7,6 +7,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cart extends Model
 {
-    /** @use HasFactory<\Database\Factories\CartFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'session_id',
+    ];
+
+    /**
+     * Relasi ke user (opsional / nullable)
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Relasi ke cart items
+     */
+    public function items()
+    {
+        return $this->hasMany(CartItem::class);
+    }
 }
