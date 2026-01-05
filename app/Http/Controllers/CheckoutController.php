@@ -8,33 +8,22 @@ use Illuminate\Http\Request;
 
 class CheckoutController extends Controller
 {
-   public function index()
-{
-    $cart = auth()->user()
-        ->cart()
-        ->with('items.product')
-        ->first();
+    public function index()
+    {
+        // Pastikan keranjang tidak kosong
+        $cart = auth()->user()->cart;
+        if (! $cart || $cart->items->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Keranjang kosong.');
+        }
 
-    if (!$cart) {
-        return redirect()->route('catalog.index')
-            ->with('error', 'Keranjang tidak ditemukan');
+        return view('checkout.index', compact('cart'));
     }
-
-    $subtotal = $cart->items->sum(function ($item) {
-        return ($item->product->price ?? 0) * $item->quantity;
-    });
-
-    $shippingCost = 20000; // contoh ongkir flat
-
-    return view('checkout.index', compact('cart', 'subtotal', 'shippingCost'));
-}
-
 
     public function store(Request $request, OrderService $orderService)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
+            'name'    => 'required|string|max:255',
+            'phone'   => 'required|string|max:20',
             'address' => 'required|string|max:500',
         ]);
 

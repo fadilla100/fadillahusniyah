@@ -5,6 +5,7 @@ namespace App\Observers;
 
 use App\Models\Product;
 use Illuminate\Support\Facades\Cache;
+use Spatie\Activitylog\Facades\ActivityLog;
 
 class ProductObserver
 {
@@ -18,10 +19,6 @@ class ProductObserver
         Cache::forget('category_' . $product->category_id . '_products');
 
         // Log activity
-        activity()
-            ->performedOn($product)
-            ->causedBy(auth()->user())
-            ->log('Produk baru dibuat: ' . $product->name);
     }
 
     /**

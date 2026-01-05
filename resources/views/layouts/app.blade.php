@@ -123,6 +123,15 @@
       badge.style.display = count > 0 ? "inline-block" : "none";
     }
   }
+   <head>
+    <!-- ... meta tags ... -->
+
+    @vite(['resources/css/app.css', 'resources/js/app.js']) {{-- Stack untuk
+    script tambahan dari child view --}} @stack('scripts')
+  </head>
+  <body>
+    <!-- ... content ... -->
+  </body>
 </script>
 </body>
 </html>
