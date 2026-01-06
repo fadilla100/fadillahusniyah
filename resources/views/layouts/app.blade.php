@@ -29,6 +29,30 @@
     {{-- Stack untuk CSS tambahan per halaman --}}
     @stack('styles')
 </head>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<script>
+document.addEventListener('click', function (e) {
+    if (!e.target.classList.contains('wishlist-btn')) return;
+
+    const btn = e.target;
+    const productId = btn.dataset.productId;
+
+    fetch(`/wishlist/${productId}/toggle`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json'
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        btn.classList.toggle('btn-danger', data.added);
+        btn.classList.toggle('btn-outline-danger', !data.added);
+        btn.innerText = data.added ? '❤️ Di Wishlist' : '🤍 Wishlist';
+    });
+});
+</script>
 <body>
     {{-- ============================================
          NAVBAR

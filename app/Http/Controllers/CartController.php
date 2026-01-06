@@ -18,13 +18,18 @@ class CartController extends Controller
     }
 
     public function index()
-    {
-        $cart = $this->cartService->getCart();
-        // Load produk dan gambar untuk ditampilkan
-        $cart->load(['items.product.primaryImage']);
+{
+    $cart = $this->cartService->getCart();
+    $cart->load(['items.product.primaryImage']);
 
-        return view('cart.index', compact('cart'));
+    // Hitung subtotal per item
+    foreach ($cart->items as $item) {
+        $item->subtotal = $item->product->price * $item->quantity;
     }
+
+    return view('cart.index', compact('cart'));
+}
+
 
     public function add(Request $request)
     {
