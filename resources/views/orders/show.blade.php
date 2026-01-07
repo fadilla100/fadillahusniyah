@@ -49,7 +49,7 @@
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button class="btn btn-primary btn-lg shadow-sm" style="background: #4C80C0; border: none; border-radius: 10px;">
+                        <button id="pay-button" class="btn btn-primary btn-lg shadow-sm" style="background: #4C80C0; border: none; border-radius: 10px;">
                             Bayar Sekarang (Midtrans)
                         </button>
                         <a href="/" class="btn btn-light text-muted">Kembali Belanja</a>
@@ -59,4 +59,49 @@
         </div>
     </div>
 </div>
-@endsection 
+@push('scripts')
+    {{-- Midtrans Snap JS (pilih sandbox/production berdasarkan konfigurasi) --}}
+    <script src="{{ config('midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}" data-client-key="{{ config('midtrans.client_key') }}"></script>
+
+    <script>
+    (function(){
+        const payBtn = document.getElementById('pay-button');
+        if (!payBtn) return;
+
+        const snapToken = @json($snapToken);
+
+        payBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            if (!snapToken) {
+                alert('Token pembayaran belum tersedia. Silakan coba lagi atau hubungi admin.');
+                return;
+            }
+
+            try {
+                window.snap.pay(snapToken, {
+                    onSuccess: function(result){
+                        // Setelah sukses, reload agar status pesanan terupdate
+                        window.location.reload();
+                    },
+                    onPending: function(result){
+                        window.location.reload();
+                    },
+                    onError: function(result){
+                        alert('Terjadi kesalahan pada proses pembayaran.');
+                        console.error(result);
+                    },
+                    onClose: function(){
+                        // user closed the popup without finishing
+                    }
+                });
+            } catch (err) {
+                console.error('Snap JS error', err);
+                alert('Gagal memulai pembayaran. Silakan coba lagi.');
+            }
+        });
+    })();
+    </script>
+@endpush
+
+@endsection

@@ -33,24 +33,28 @@
 
 <script>
 document.addEventListener('click', function (e) {
-    if (!e.target.classList.contains('wishlist-btn')) return;
+  // Event delegation: tangani klik pada tombol wishlist dari berbagai template
+  const el = e.target.closest('button, a');
+  if (!el) return;
 
-    const btn = e.target;
-    const productId = btn.dataset.productId;
+  // Cari productId dari atribut data-product-id
+  const dataId = el.dataset.productId;
+  if (dataId) {
+    e.preventDefault();
+    toggleWishlist(dataId);
+    return;
+  }
 
-    fetch(`/wishlist/${productId}/toggle`, {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            'Accept': 'application/json'
-        }
-    })
-    .then(res => res.json())
-    .then(data => {
-        btn.classList.toggle('btn-danger', data.added);
-        btn.classList.toggle('btn-outline-danger', !data.added);
-        btn.innerText = data.added ? '❤️ Di Wishlist' : '🤍 Wishlist';
-    });
+  // Atau dari kelas seperti wishlist-btn-123 atau wishlist-btn
+  const cls = [...el.classList].find(c => c === 'wishlist-btn' || c.startsWith('wishlist-btn-'));
+  if (cls) {
+    e.preventDefault();
+    const match = cls.match(/wishlist-btn-(\d+)/);
+    const id = match ? match[1] : null;
+    if (id) {
+      toggleWishlist(id);
+    }
+  }
 });
 </script>
 <body>
@@ -92,16 +96,20 @@ document.addEventListener('click', function (e) {
       const token = document.querySelector('meta[name="csrf-token"]').content;
 
       // 2. Kirim Request ke Server
-      const response = await fetch(`/wishlist/toggle/${productId}`, {
+      const url = `/wishlist/toggle/${productId}`;
+      console.log('Wishlist: sending POST to', url);
+      const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "X-CSRF-TOKEN": token, // Tempel token di header
+          "Accept": "application/json"
         },
       });
 
       // 3. Handle jika user belum login (Error 401 Unauthorized)
       if (response.status === 401) {
+        console.warn('Wishlist: unauthorized (401)');
         window.location.href = "/login"; // Lempar ke halaman login
         return;
       }
@@ -110,10 +118,18 @@ document.addEventListener('click', function (e) {
       const data = await response.json();
 
       if (data.status === "success") {
+        console.log('Wishlist response', data);
         // 5. Update UI tanpa reload halaman
         updateWishlistUI(productId, data.added); // Ganti warna ikon
         updateWishlistCounter(data.count); // Update angka di header
-        showToast(data.message); // Tampilkan notifikasi
+        if (typeof showToast === 'function') {
+          showToast(data.message);
+        } else {
+          // fallback ringan jika fungsi notifikasi tidak tersedia
+          console.info(data.message);
+        }
+      } else {
+        console.warn('Wishlist: unexpected response', data);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -147,15 +163,6 @@ document.addEventListener('click', function (e) {
       badge.style.display = count > 0 ? "inline-block" : "none";
     }
   }
-   <head>
-    <!-- ... meta tags ... -->
-
-    @vite(['resources/css/app.css', 'resources/js/app.js']) {{-- Stack untuk
-    script tambahan dari child view --}} @stack('scripts')
-  </head>
-  <body>
-    <!-- ... content ... -->
-  </body>
-</script>
+  </script>
 </body>
 </html>
